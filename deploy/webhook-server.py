@@ -47,7 +47,7 @@ def verify_signature(body: bytes, signature: str) -> bool:
     return hmac.compare_digest(expected, signature)
 
 
-def run(cmd: list[str]) -> tuple[int, str]:
+def run(cmd: list) -> tuple:
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=DEPLOY_DIR)
     return result.returncode, result.stdout.strip() or result.stderr.strip()
 
