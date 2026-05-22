@@ -25,7 +25,7 @@ def run_cmd(cmd):
         cwd=PROJECT_DIR,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        text=True,
+        universal_newlines=True,
         timeout=600,
     )
     log(result.stdout)
