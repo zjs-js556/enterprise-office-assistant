@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  office-mysql:
+    image: mysql:8.0
+    container_name: office-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-office_assistant}
+      MYSQL_USER: ${MYSQL_USER:-office_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - office-net
+
+  office-api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: office-api
+    restart: always
+    env_file:
+      - ${ENV_FILE:-/opt/office-assistant/.env}
+    environment:
+      FLASK_ENV: ${FLASK_ENV:-production}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      SECRET_KEY: ${SECRET_KEY}
+    volumes:
+      - ${LOG_DIR:-/opt/office-assistant/logs}:/app/logs
+    depends_on:
+      office-mysql:
+        condition: service_healthy
+    networks:
+      - office-net
+
+  office-nginx:
+    image: nginx:alpine
+    container_name: office-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - office-api
+    networks:
+      - office-net
+
+volumes:
+  mysql_data:
+
+networks:
+  office-net:
+    driver: bridge
