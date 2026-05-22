@@ -28,6 +28,9 @@ Thumbs.db
 # Docker
 docker-compose.override.yml
 
+# 测试数据库文件
+*.db
+
 # 依赖
 node_modules/
 
