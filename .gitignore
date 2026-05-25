@@ -39,6 +39,9 @@ node_modules/
 .expo/
 dist/
 
+# Claude Code local settings
+harmony/.claude/
+
 # HarmonyOS / DevEco Studio build outputs
 harmony/build/
 harmony/entry/build/
