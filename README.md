@@ -421,3 +421,5 @@ curl -X DELETE http://localhost:5000/api/v1/categories/1 \
 5. 依次演示：首页 → 员工管理 → 新增员工 → 员工详情 → 分类管理 → 设备管理
 6. 展示：下拉刷新、长按删除确认弹窗、分类筛选、空状态占位
 # webhook test Fri May 22 05:27:54 PM CST 2026
+#   w e b h o o k   v e r i f y   0 5 / 2 5 / 2 0 2 6   1 4 : 2 8 : 4 1  
+ 
