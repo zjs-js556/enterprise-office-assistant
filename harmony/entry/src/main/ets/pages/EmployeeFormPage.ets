@@ -2,8 +2,9 @@ import { router } from '@kit.ArkUI';
 import { Colors } from '../theme/colors';
 import { Spacing } from '../theme/spacing';
 import { Typography } from '../theme/typography';
-import { Employee } from '../models/Employee';
+import { Employee, EmployeeCreateRequest, EmployeeUpdateRequest } from '../models/Employee';
 import { EmployeeService } from '../services/employeeService';
+import { HttpResponse } from '../services/http';
 import { Validator } from '../utils/validator';
 import { FormInput } from '../components/FormInput';
 
@@ -53,17 +54,21 @@ struct EmployeeFormPage {
     this.formError = '';
     this.submitting = true;
 
-    const data = {
-      name: this.name.trim(),
-      age: parseInt(this.age),
-      email: this.email.trim()
-    };
-
-    let response;
+    let response: HttpResponse<Employee>;
     if (this.isEdit) {
-      response = await EmployeeService.update(this.employeeId, data);
+      const updateData: EmployeeUpdateRequest = {
+        name: this.name.trim(),
+        age: parseInt(this.age),
+        email: this.email.trim()
+      };
+      response = await EmployeeService.update(this.employeeId, updateData);
     } else {
-      response = await EmployeeService.create(data);
+      const createData: EmployeeCreateRequest = {
+        name: this.name.trim(),
+        age: parseInt(this.age),
+        email: this.email.trim()
+      };
+      response = await EmployeeService.create(createData);
     }
 
     if (response.code === 200) {

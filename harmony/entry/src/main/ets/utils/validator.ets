@@ -39,41 +39,41 @@ export class Validator {
   }
 
   static validateLoginForm(username: string, password: string): string | null {
-    if (!this.isNotEmpty(username)) {
+    if (!Validator.isNotEmpty(username)) {
       return '请输入用户名';
     }
-    if (!this.isNotEmpty(password)) {
+    if (!Validator.isNotEmpty(password)) {
       return '请输入密码';
     }
     return null;
   }
 
   static validateEmployeeForm(name: string, age: string, email: string): string | null {
-    if (!this.isValidName(name)) {
+    if (!Validator.isValidName(name)) {
       return '姓名长度应在1-20个字符之间';
     }
     const ageNum = parseInt(age);
-    if (isNaN(ageNum) || !this.isValidAge(ageNum)) {
+    if (isNaN(ageNum) || !Validator.isValidAge(ageNum)) {
       return '年龄应在18-60岁之间';
     }
-    if (!this.isValidEmail(email)) {
+    if (!Validator.isValidEmail(email)) {
       return '请输入有效的邮箱地址';
     }
     return null;
   }
 
   static validateCategoryForm(name: string): string | null {
-    if (!this.isValidName(name)) {
+    if (!Validator.isValidName(name)) {
       return '分类名称长度应在1-20个字符之间';
     }
     return null;
   }
 
   static validateDeviceForm(name: string, model: string, categoryId: number): string | null {
-    if (!this.isValidDeviceName(name)) {
+    if (!Validator.isValidDeviceName(name)) {
       return '设备名称长度应在1-100个字符之间';
     }
-    if (!this.isValidModel(model)) {
+    if (!Validator.isValidModel(model)) {
       return '设备型号长度不能超过100个字符';
     }
     if (!categoryId || categoryId <= 0) {

@@ -4,9 +4,8 @@ import { PaginatedData } from '../models/ApiResponse';
 
 export class EmployeeService {
   static async getList(page: number = 1, pageSize: number = 20): Promise<HttpResponse<PaginatedData<Employee>>> {
-    return httpClient.get<PaginatedData<Employee>>('/employees', {
-      params: { page, page_size: pageSize }
-    });
+    const params: Record<string, string | number> = { 'page': page, 'page_size': pageSize };
+    return httpClient.get<PaginatedData<Employee>>('/employees', { params: params });
   }
 
   static async getById(id: number): Promise<HttpResponse<Employee>> {

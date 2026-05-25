@@ -31,11 +31,9 @@ struct HomePage {
 
   async loadStats(): Promise<void> {
     try {
-      const [empRes, catRes, devRes] = await Promise.all([
-        EmployeeService.getList(1, 1),
-        CategoryService.getList(),
-        DeviceService.getList()
-      ]);
+      const empRes = await EmployeeService.getList(1, 1);
+      const catRes = await CategoryService.getList();
+      const devRes = await DeviceService.getList();
 
       if (empRes.code === 200 && empRes.data) {
         this.employeeCount = String(empRes.data.total);

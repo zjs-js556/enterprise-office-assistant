@@ -63,19 +63,21 @@ class HttpClient {
 
     const httpRequest = http.createHttp();
     try {
-      const requestOptions: http.HttpRequestOptions = {
-        method: method,
-        header: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        connectTimeout: TIMEOUT,
-        readTimeout: TIMEOUT
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       };
 
       if (this.token) {
-        requestOptions.header!['Authorization'] = `Bearer ${this.token}`;
+        headers['Authorization'] = `Bearer ${this.token}`;
       }
+
+      const requestOptions: http.HttpRequestOptions = {
+        method: method,
+        header: headers,
+        connectTimeout: TIMEOUT,
+        readTimeout: TIMEOUT
+      };
 
       if (body) {
         requestOptions.extraData = JSON.stringify(body);

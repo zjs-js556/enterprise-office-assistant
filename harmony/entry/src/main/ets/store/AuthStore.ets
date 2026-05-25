@@ -6,6 +6,11 @@ const TOKEN_KEY = 'auth_token';
 const USERNAME_KEY = 'auth_username';
 const ROLE_KEY = 'auth_role';
 
+interface LoginResult {
+  success: boolean;
+  message: string;
+}
+
 export class AuthStore {
   private static instance: AuthStore;
 
@@ -58,7 +63,7 @@ export class AuthStore {
     }
   }
 
-  async login(username: string, password: string): Promise<{ success: boolean; message: string }> {
+  async login(username: string, password: string): Promise<LoginResult> {
     const response = await AuthService.login(username, password);
 
     if (response.code === 200 && response.data?.token) {
@@ -75,10 +80,12 @@ export class AuthStore {
       await StorageUtil.setString(ROLE_KEY, data.role);
 
       this.notifyLogin();
-      return { success: true, message: response.message || '登录成功' };
+      const result: LoginResult = { success: true, message: response.message || '登录成功' };
+      return result;
     }
 
-    return { success: false, message: response.message || '登录失败' };
+    const result: LoginResult = { success: false, message: response.message || '登录失败' };
+    return result;
   }
 
   async logout(): Promise<void> {

@@ -2,10 +2,11 @@ import { router } from '@kit.ArkUI';
 import { Colors } from '../theme/colors';
 import { Spacing } from '../theme/spacing';
 import { Typography } from '../theme/typography';
-import { Device } from '../models/Device';
+import { Device, DeviceCreateRequest, DeviceUpdateRequest } from '../models/Device';
 import { Category } from '../models/Category';
 import { DeviceService } from '../services/deviceService';
 import { CategoryService } from '../services/categoryService';
+import { HttpResponse } from '../services/http';
 import { Validator } from '../utils/validator';
 import { FormInput } from '../components/FormInput';
 import { LoadingView } from '../components/LoadingView';
@@ -73,17 +74,21 @@ struct DeviceFormPage {
     this.formError = '';
     this.submitting = true;
 
-    const data = {
-      name: this.name.trim(),
-      model: this.model.trim() || undefined,
-      category_id: this.selectedCategoryId
-    };
-
-    let response;
+    let response: HttpResponse<Device>;
     if (this.isEdit) {
-      response = await DeviceService.update(this.deviceId, data);
+      const updateData: DeviceUpdateRequest = {
+        name: this.name.trim(),
+        model: this.model.trim() || undefined,
+        category_id: this.selectedCategoryId
+      };
+      response = await DeviceService.update(this.deviceId, updateData);
     } else {
-      response = await DeviceService.create(data);
+      const createData: DeviceCreateRequest = {
+        name: this.name.trim(),
+        model: this.model.trim() || undefined,
+        category_id: this.selectedCategoryId
+      };
+      response = await DeviceService.create(createData);
     }
 
     if (response.code === 200) {

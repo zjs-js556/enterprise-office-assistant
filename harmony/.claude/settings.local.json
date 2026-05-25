@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(npm --version)",
+      "Bash(ohpm:*)",
+      "Bash(\"/d/DevEco Studio/tools/hvigor/bin/hvigorw.bat\" assembleHap)",
+      "Bash(node:*)",
+      "Bash(ls:*)"
     ]
   }
 }

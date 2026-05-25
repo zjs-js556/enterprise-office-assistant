@@ -21,7 +21,7 @@ export struct FeatureCard {
       .borderRadius(Spacing.borderRadius)
       .backgroundColor(this.iconBgColor)
       .justifyContent(FlexAlign.Center)
-      .alignItems(HorizontalAlign.Center)
+      .alignItems(VerticalAlign.Center)
 
       Text(this.label)
         .fontSize(Typography.fontSizeBase)
