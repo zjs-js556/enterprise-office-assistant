@@ -54,3 +54,7 @@ harmony/.npmrc
 
 # HarmonyOS IDE (already covered by .idea/ above, but keep for clarity)
 harmony/.idea/
+
+# Mobile platform generated files
+mobile/.npmrc
+mobile/android-backup/

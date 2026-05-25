@@ -6,7 +6,14 @@
       "Bash(ohpm:*)",
       "Bash(\"/d/DevEco Studio/tools/hvigor/bin/hvigorw.bat\" assembleHap)",
       "Bash(node:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(/d/DevEco Studio/sdk/default/openharmony/toolchains/hdc.exe list:*)",
+      "Bash(openssl pkcs12:*)",
+      "Bash(dir \"D:\\\\DevEco Studio\\\\tools\\\\hvigor\\\\bin\\\\hvigorw.bat\")",
+      "Bash(dir \"D:\\\\DevEcoStudio\\\\tools\\\\hvigor\\\\bin\\\\hvigorw.bat\")",
+      "Bash(dir \"C:\\\\DevEco Studio\\\\tools\\\\hvigor\\\\bin\\\\hvigorw.bat\")",
+      "Bash(dir \"C:\\\\Program Files\\\\DevEco Studio\\\\tools\\\\hvigor\\\\bin\\\\hvigorw.bat\")",
+      "Bash(\"D:\\\\DevEco Studio\\\\tools\\\\hvigor\\\\bin\\\\hvigorw.bat\" assembleHap)"
     ]
   }
 }
