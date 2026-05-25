@@ -1,0 +1,16 @@
+{
+  "src": [
+    "pages/LoginPage",
+    "pages/HomePage",
+    "pages/EmployeePage",
+    "pages/EmployeeDetailPage",
+    "pages/EmployeeFormPage",
+    "pages/CategoryPage",
+    "pages/DevicePage",
+    "pages/DeviceDetailPage",
+    "pages/DeviceFormPage",
+    "pages/LogPage",
+    "pages/ProfilePage",
+    "pages/AssistantPage"
+  ]
+}

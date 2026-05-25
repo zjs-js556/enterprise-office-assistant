@@ -38,3 +38,19 @@ node_modules/
 # Expo
 .expo/
 dist/
+
+# HarmonyOS / DevEco Studio build outputs
+harmony/build/
+harmony/entry/build/
+harmony/.hvigor/
+harmony/oh_modules/
+harmony/entry/oh_modules/
+harmony/local.properties
+harmony/.npmrc
+*.hap
+*.hsp
+*.har
+*.app
+
+# HarmonyOS IDE (already covered by .idea/ above, but keep for clarity)
+harmony/.idea/

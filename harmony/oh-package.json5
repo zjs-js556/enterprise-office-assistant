@@ -1,0 +1,10 @@
+{
+  "modelVersion": "5.0.0",
+  "description": "Enterprise Office Assistant - HarmonyOS App",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@ohos/hvigor": "5.0.2",
+    "@ohos/hvigor-ohos-plugin": "5.0.2"
+  }
+}
