@@ -1,6 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Colors, FontSize, Spacing, BorderRadius } from "../utils/theme";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
+import { Shadows } from "../theme";
 
 interface Props {
   title: string;
@@ -18,7 +21,11 @@ export default function InfoCard({ title, value, onPress }: Props) {
   );
 
   if (onPress) {
-    return <TouchableOpacity onPress={onPress}>{content}</TouchableOpacity>;
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+        {content}
+      </TouchableOpacity>
+    );
   }
   return content;
 }
@@ -26,20 +33,21 @@ export default function InfoCard({ title, value, onPress }: Props) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
+    borderRadius: 12,
+    padding: Spacing.lg,
     marginBottom: Spacing.sm,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    ...Shadows.card,
   },
   title: {
-    fontSize: FontSize.md,
+    fontSize: Typography.md,
     color: Colors.textSecondary,
   },
   value: {
-    fontSize: FontSize.lg,
+    fontSize: Typography.lg,
     color: Colors.textPrimary,
-    fontWeight: "500",
+    fontWeight: Typography.medium,
   },
 });

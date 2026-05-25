@@ -14,34 +14,13 @@ import type { Employee } from "../types";
 import EmptyState from "../components/EmptyState";
 import LoadingView from "../components/LoadingView";
 import ConfirmDialog from "../components/ConfirmDialog";
-import { Colors, FontSize, Spacing, BorderRadius } from "../utils/theme";
-
-function Avatar({ name }: { name: string }) {
-  const colors = ["#1677FF", "#52C41A", "#FAAD14", "#FF4D4F", "#722ED1"];
-  const idx = name.charCodeAt(0) % colors.length;
-  const initial = name[0] || "?";
-
-  return (
-    <View style={[avatarStyles.circle, { backgroundColor: colors[idx] }]}>
-      <Text style={avatarStyles.text}>{initial}</Text>
-    </View>
-  );
-}
-
-const avatarStyles = StyleSheet.create({
-  circle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: FontSize.xl,
-    fontWeight: "700",
-    color: "#fff",
-  },
-});
+import UserAvatar from "../components/UserAvatar";
+import StatusTag from "../components/StatusTag";
+import AppIcon, { IconNames } from "../components/AppIcon";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
+import { Shadows } from "../theme";
 
 export default function EmployeeListScreen({ navigation }: any) {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -91,14 +70,36 @@ export default function EmployeeListScreen({ navigation }: any) {
       onPress={() => navigation.navigate("EmployeeDetail", { id: item.id })}
       onLongPress={() => setDeleteTarget(item)}
     >
-      <Avatar name={item.name} />
-      <View style={styles.cardBody}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.email}>{item.email}</Text>
+      <View style={styles.cardTop}>
+        <UserAvatar name={item.name} size={40} />
+        <View style={styles.cardInfo}>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.email}>{item.email}</Text>
+        </View>
+        <StatusTag label="在职" variant="success" />
       </View>
-      <View style={styles.cardRight}>
-        <Text style={styles.age}>{item.age} 岁</Text>
-        <Text style={styles.arrow}>›</Text>
+      <View style={styles.cardActions}>
+        <TouchableOpacity
+          style={[styles.actionBtn, styles.actionView]}
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate("EmployeeDetail", { id: item.id })}
+        >
+          <Text style={styles.actionViewText}>查看详情</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.actionBtn, styles.actionEdit]}
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate("EmployeeForm", { id: item.id })}
+        >
+          <Text style={styles.actionEditText}>编辑</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.actionBtn, styles.actionDelete]}
+          activeOpacity={0.7}
+          onPress={() => setDeleteTarget(item)}
+        >
+          <Text style={styles.actionDeleteText}>删除</Text>
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -118,7 +119,7 @@ export default function EmployeeListScreen({ navigation }: any) {
         ListEmptyComponent={
           <EmptyState
             message="暂无员工数据"
-            actionLabel="新增员工"
+            actionLabel="立即添加"
             onAction={() => navigation.navigate("EmployeeForm", {})}
           />
         }
@@ -136,7 +137,7 @@ export default function EmployeeListScreen({ navigation }: any) {
         activeOpacity={0.8}
         onPress={() => navigation.navigate("EmployeeForm", {})}
       >
-        <Text style={styles.fabText}>＋</Text>
+        <AppIcon name={IconNames.add} size={26} color="#fff" />
       </TouchableOpacity>
 
       <ConfirmDialog
@@ -146,6 +147,7 @@ export default function EmployeeListScreen({ navigation }: any) {
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         loading={deleting}
+        dangerous
       />
     </View>
   );
@@ -157,46 +159,76 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   listContent: {
-    paddingTop: Spacing.sm,
-    paddingBottom: 80,
+    padding: Spacing.lg,
+    paddingBottom: 96,
   },
   emptyList: {
     flexGrow: 1,
   },
   card: {
     backgroundColor: Colors.surface,
-    marginHorizontal: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
+    marginBottom: 12,
+    borderRadius: 16,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    ...Shadows.card,
+  },
+  cardTop: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 12,
   },
-  cardBody: {
+  cardInfo: {
     flex: 1,
-    marginLeft: Spacing.md,
+    marginLeft: 12,
   },
   name: {
-    fontSize: FontSize.lg,
-    fontWeight: "600",
+    fontSize: Typography.md,
+    fontWeight: Typography.semibold,
     color: Colors.textPrimary,
   },
   email: {
-    fontSize: FontSize.sm,
-    color: Colors.textSecondary,
+    fontSize: Typography.xs,
+    color: Colors.textTertiary,
     marginTop: 2,
   },
-  cardRight: {
-    alignItems: "flex-end",
+  cardActions: {
+    flexDirection: "row",
+    gap: 8,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight,
   },
-  age: {
-    fontSize: FontSize.md,
+  actionBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  actionView: {
+    backgroundColor: Colors.primaryLight,
+  },
+  actionViewText: {
+    fontSize: Typography.xs,
+    fontWeight: Typography.medium,
+    color: Colors.primary,
+  },
+  actionEdit: {
+    backgroundColor: Colors.borderLight,
+  },
+  actionEditText: {
+    fontSize: Typography.xs,
+    fontWeight: Typography.medium,
     color: Colors.textSecondary,
   },
-  arrow: {
-    fontSize: 20,
-    color: Colors.textSecondary,
-    marginTop: 2,
+  actionDelete: {
+    backgroundColor: Colors.dangerLight,
+  },
+  actionDeleteText: {
+    fontSize: Typography.xs,
+    fontWeight: Typography.medium,
+    color: Colors.danger,
   },
   fab: {
     position: "absolute",
@@ -208,11 +240,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 6,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
+    ...Shadows.fab,
   },
   fabText: {
     fontSize: 26,

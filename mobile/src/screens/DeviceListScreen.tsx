@@ -4,6 +4,7 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
+  ScrollView,
   StyleSheet,
   Alert,
   RefreshControl,
@@ -15,7 +16,12 @@ import type { Device, Category } from "../types";
 import EmptyState from "../components/EmptyState";
 import LoadingView from "../components/LoadingView";
 import ConfirmDialog from "../components/ConfirmDialog";
-import { Colors, FontSize, Spacing, BorderRadius } from "../utils/theme";
+import StatusTag from "../components/StatusTag";
+import AppIcon, { IconNames } from "../components/AppIcon";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
+import { Shadows } from "../theme";
 
 export default function DeviceListScreen({ navigation }: any) {
   const [devices, setDevices] = useState<Device[]>([]);
@@ -77,18 +83,24 @@ export default function DeviceListScreen({ navigation }: any) {
       onPress={() => navigation.navigate("DeviceForm", { id: item.id })}
       onLongPress={() => setDeleteTarget(item)}
     >
-      <View style={styles.cardIcon}>
-        <Text style={styles.cardIconText}>💻</Text>
-      </View>
-      <View style={styles.cardBody}>
-        <Text style={styles.cardName}>{item.name}</Text>
-        <Text style={styles.cardModel}>{item.model || "无型号"}</Text>
-      </View>
-      <View style={styles.cardRight}>
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>{getCategoryName(item.category_id)}</Text>
+      <View style={styles.cardTop}>
+        <View style={styles.iconBox}>
+          <AppIcon name={IconNames.desktop} size={20} color={Colors.success} />
         </View>
-        <Text style={styles.arrow}>›</Text>
+        <View style={styles.cardInfo}>
+          <Text style={styles.cardName}>{item.name}</Text>
+          <Text style={styles.cardModel}>型号：{item.model || "—"}</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.editIcon}
+          activeOpacity={0.6}
+          onPress={() => navigation.navigate("DeviceForm", { id: item.id })}
+        >
+          <AppIcon name={IconNames.edit} size={16} color={Colors.textTertiary} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.cardBottom}>
+        <StatusTag label={getCategoryName(item.category_id)} variant="primary" />
       </View>
     </TouchableOpacity>
   );
@@ -98,14 +110,34 @@ export default function DeviceListScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <View style={styles.filterBar}>
-        <Scrollable
-          data={[
-            { id: undefined, name: "全部" },
-            ...categories.map((c) => ({ id: c.id as number | undefined, name: c.name })),
-          ]}
-          activeId={filterId}
-          onSelect={setFilterId}
-        />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <TouchableOpacity
+            style={[styles.chip, !filterId && styles.chipActive]}
+            onPress={() => setFilterId(undefined)}
+            activeOpacity={0.7}
+          >
+            <Text style={[styles.chipText, !filterId && styles.chipTextActive]}>
+              全部
+            </Text>
+          </TouchableOpacity>
+          {categories.map((c) => (
+            <TouchableOpacity
+              key={c.id}
+              style={[styles.chip, filterId === c.id && styles.chipActive]}
+              onPress={() => setFilterId(c.id)}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  styles.chipText,
+                  filterId === c.id && styles.chipTextActive,
+                ]}
+              >
+                {c.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </View>
 
       <FlatList
@@ -137,110 +169,101 @@ export default function DeviceListScreen({ navigation }: any) {
         activeOpacity={0.8}
         onPress={() => navigation.navigate("DeviceForm", {})}
       >
-        <Text style={styles.fabText}>＋</Text>
+        <AppIcon name={IconNames.add} size={26} color="#fff" />
       </TouchableOpacity>
 
       <ConfirmDialog
         visible={deleteTarget !== null}
         title="删除设备"
-        message={`确定要删除「${deleteTarget?.name}」吗？`}
+        message={`确定要删除「${deleteTarget?.name}」吗？此操作不可撤销。`}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         loading={deleting}
+        dangerous
       />
     </View>
   );
 }
 
-function Scrollable({
-  data,
-  activeId,
-  onSelect,
-}: {
-  data: { id: number | undefined; name: string }[];
-  activeId: number | undefined;
-  onSelect: (id: number | undefined) => void;
-}) {
-  return (
-    <View style={filterStyles.row}>
-      {data.map((item) => {
-        const active = item.id === activeId;
-        return (
-          <TouchableOpacity
-            key={String(item.id)}
-            style={[filterStyles.chip, active && filterStyles.chipActive]}
-            onPress={() => onSelect(item.id)}
-            activeOpacity={0.7}
-          >
-            <Text style={[filterStyles.text, active && filterStyles.textActive]}>
-              {item.name}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-}
-
-const filterStyles = StyleSheet.create({
-  row: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.sm },
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: Colors.background },
+  filterBar: {
+    backgroundColor: Colors.surface,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderLight,
+  },
   chip: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.background,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    borderRadius: 100,
+    backgroundColor: Colors.borderLight,
+    marginRight: 8,
   },
   chipActive: {
     backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
   },
-  text: { fontSize: FontSize.sm, color: Colors.textSecondary },
-  textActive: { color: "#fff", fontWeight: "500" },
-});
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  listContent: { paddingTop: Spacing.sm, paddingBottom: 80 },
+  chipText: {
+    fontSize: Typography.xs,
+    fontWeight: Typography.medium,
+    color: Colors.textSecondary,
+  },
+  chipTextActive: {
+    color: Colors.textInverse,
+  },
+  listContent: { padding: Spacing.lg, paddingBottom: 96 },
   emptyList: { flexGrow: 1 },
-  filterBar: {
-    backgroundColor: Colors.surface,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border,
-  },
   card: {
     backgroundColor: Colors.surface,
-    marginHorizontal: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    flexDirection: "row",
-    alignItems: "center",
+    marginBottom: 12,
+    borderRadius: 16,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    ...Shadows.card,
   },
-  cardIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: BorderRadius.md,
-    backgroundColor: "#E6F7FF",
+  cardTop: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 12,
+  },
+  iconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: Colors.successLight,
     justifyContent: "center",
     alignItems: "center",
   },
-  cardIconText: { fontSize: 22 },
-  cardBody: { flex: 1, marginLeft: Spacing.sm },
-  cardName: { fontSize: FontSize.lg, fontWeight: "600", color: Colors.textPrimary },
-  cardModel: { fontSize: FontSize.sm, color: Colors.textSecondary, marginTop: 2 },
-  cardRight: { alignItems: "flex-end" },
-  badge: {
-    backgroundColor: Colors.background,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 2,
-    borderRadius: BorderRadius.sm,
+  cardInfo: {
+    flex: 1,
+    marginLeft: 12,
   },
-  badgeText: { fontSize: FontSize.sm, color: Colors.primary },
-  arrow: { fontSize: 20, color: Colors.textSecondary, marginTop: 2 },
+  cardName: {
+    fontSize: Typography.md,
+    fontWeight: Typography.semibold,
+    color: Colors.textPrimary,
+  },
+  cardModel: {
+    fontSize: Typography.xs,
+    color: Colors.textTertiary,
+    marginTop: 2,
+  },
+  editIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 12,
+    backgroundColor: Colors.borderLight,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cardBottom: {
+    flexDirection: "row",
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight,
+  },
   fab: {
     position: "absolute",
     right: 20,
@@ -251,11 +274,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 6,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
+    ...Shadows.fab,
   },
-  fabText: { fontSize: 26, color: "#fff", lineHeight: 28 },
 });

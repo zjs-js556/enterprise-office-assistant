@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -14,7 +14,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.enterprise.office.assistant"
+      "bundleIdentifier": "com.enterprise.office.assistant",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +25,24 @@
       "package": "com.enterprise.office.assistant"
     },
     "plugins": [
-      "expo-router"
-    ]
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "kotlinVersion": "2.0.21",
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "minSdkVersion": 24
+          }
+        }
+      ],
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5271e712-9b9a-49b8-a87a-f5199b1e6e7c"
+      }
+    },
+    "owner": "zjszjszjs"
   }
 }

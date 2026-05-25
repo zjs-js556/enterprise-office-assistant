@@ -14,8 +14,12 @@ def log(msg):
     os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
     line = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {msg}"
     print(line, flush=True)
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(line + "\n")
+    try:
+        os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
+        with open(LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(line + "\n")
+    except Exception as e:
+        print(f"无法写入日志文件: {e}", flush=True)
 
 def run_cmd(cmd):
     log(f"RUN: {cmd}")

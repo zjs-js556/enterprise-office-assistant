@@ -56,6 +56,13 @@ export interface DeviceFormData {
 export type RootStackParamList = {
   Login: undefined;
   Main: undefined;
+  AIAssistant: undefined;
+  TicketCreate: undefined;
+  MyTickets: undefined;
+  TicketDetail: { id: number };
+  MessageNotifications: undefined;
+  Profile: undefined;
+  ErrorStates: undefined;
 };
 
 export type EmployeeStackParamList = {

@@ -22,7 +22,12 @@ import AppButton from "../components/AppButton";
 import EmptyState from "../components/EmptyState";
 import LoadingView from "../components/LoadingView";
 import ConfirmDialog from "../components/ConfirmDialog";
-import { Colors, FontSize, Spacing, BorderRadius } from "../utils/theme";
+import StatusTag from "../components/StatusTag";
+import AppIcon, { IconNames } from "../components/AppIcon";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
+import { Shadows } from "../theme";
 
 export default function CategoryListScreen() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -113,13 +118,41 @@ export default function CategoryListScreen() {
       onPress={() => openModal(item)}
       onLongPress={() => setDeleteTarget(item)}
     >
-      <View style={styles.cardLeft}>
-        <View style={styles.iconCircle}>
-          <Text style={styles.iconText}>📂</Text>
+      <View style={styles.cardTop}>
+        <View style={styles.iconBox}>
+          <AppIcon name={IconNames.folder} size={20} color={Colors.purple} />
         </View>
-        <Text style={styles.cardName}>{item.name}</Text>
+        <View style={styles.cardInfo}>
+          <Text style={styles.cardName}>{item.name}</Text>
+          <Text style={styles.cardCount}>{item.device_count} 台设备</Text>
+        </View>
+        <StatusTag
+          label={`${item.device_count} 台`}
+          variant={item.device_count > 0 ? "primary" : "default"}
+        />
       </View>
-      <Text style={styles.cardCount}>{item.device_count} 台设备</Text>
+      <View style={styles.cardActions}>
+        <TouchableOpacity
+          style={[styles.actionBtn, styles.actionView]}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.actionViewText}>查看设备</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.actionBtn, styles.actionEdit]}
+          activeOpacity={0.7}
+          onPress={() => openModal(item)}
+        >
+          <Text style={styles.actionEditText}>编辑</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.actionBtn, styles.actionDelete]}
+          activeOpacity={0.7}
+          onPress={() => setDeleteTarget(item)}
+        >
+          <Text style={styles.actionDeleteText}>删除</Text>
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 
@@ -138,7 +171,7 @@ export default function CategoryListScreen() {
         ListEmptyComponent={
           <EmptyState
             message="暂无分类数据"
-            actionLabel="新增分类"
+            actionLabel="立即添加"
             onAction={() => openModal()}
           />
         }
@@ -156,20 +189,21 @@ export default function CategoryListScreen() {
         activeOpacity={0.8}
         onPress={() => openModal()}
       >
-        <Text style={styles.fabText}>＋</Text>
+        <AppIcon name={IconNames.add} size={26} color="#fff" />
       </TouchableOpacity>
 
       <Modal visible={modalVisible} transparent animationType="fade">
         <View style={styles.overlay}>
           <View style={styles.dialog}>
+            <View style={styles.handle} />
             <Text style={styles.dialogTitle}>
               {editItem ? "编辑分类" : "新增分类"}
             </Text>
             <AppInput
-              label="分类名称"
+              label="分类名称 *"
               value={formName}
               onChangeText={setFormName}
-              placeholder="请输入分类名称"
+              placeholder="请输入分类名称（1-20 字符）"
               error={formError}
             />
             <View style={styles.dialogActions}>
@@ -177,13 +211,13 @@ export default function CategoryListScreen() {
                 title="取消"
                 type="outline"
                 onPress={() => setModalVisible(false)}
-                style={styles.btn}
+                style={styles.dialogBtn}
               />
               <AppButton
                 title="保存"
                 onPress={handleSubmit}
                 loading={submitting}
-                style={styles.btn}
+                style={styles.dialogBtn}
               />
             </View>
           </View>
@@ -193,10 +227,11 @@ export default function CategoryListScreen() {
       <ConfirmDialog
         visible={deleteTarget !== null}
         title="删除分类"
-        message={`确定要删除「${deleteTarget?.name}」吗？`}
+        message={`确定要删除「${deleteTarget?.name}」吗？此操作不可撤销。`}
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         loading={deleting}
+        dangerous
       />
     </View>
   );
@@ -204,35 +239,75 @@ export default function CategoryListScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  listContent: { paddingTop: Spacing.sm, paddingBottom: 80 },
+  listContent: { padding: Spacing.lg, paddingBottom: 96 },
   emptyList: { flexGrow: 1 },
   card: {
     backgroundColor: Colors.surface,
-    marginHorizontal: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    marginBottom: 12,
+    borderRadius: 16,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    ...Shadows.card,
   },
-  cardLeft: { flexDirection: "row", alignItems: "center" },
-  iconCircle: {
+  cardTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  iconBox: {
     width: 40,
     height: 40,
-    borderRadius: BorderRadius.md,
-    backgroundColor: "#F0F5FF",
+    borderRadius: 12,
+    backgroundColor: Colors.purpleLight,
     justifyContent: "center",
     alignItems: "center",
   },
-  iconText: { fontSize: 20 },
-  cardName: {
-    fontSize: FontSize.lg,
-    fontWeight: "600",
-    color: Colors.textPrimary,
-    marginLeft: Spacing.sm,
+  cardInfo: {
+    flex: 1,
+    marginLeft: 12,
   },
-  cardCount: { fontSize: FontSize.sm, color: Colors.textSecondary },
+  cardName: {
+    fontSize: Typography.md,
+    fontWeight: Typography.semibold,
+    color: Colors.textPrimary,
+  },
+  cardCount: {
+    fontSize: Typography.xs,
+    color: Colors.textTertiary,
+    marginTop: 2,
+  },
+  cardActions: {
+    flexDirection: "row",
+    gap: 8,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight,
+  },
+  actionBtn: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  actionView: { backgroundColor: Colors.primaryLight },
+  actionViewText: {
+    fontSize: Typography.xs,
+    fontWeight: Typography.medium,
+    color: Colors.primary,
+  },
+  actionEdit: { backgroundColor: Colors.borderLight },
+  actionEditText: {
+    fontSize: Typography.xs,
+    fontWeight: Typography.medium,
+    color: Colors.textSecondary,
+  },
+  actionDelete: { backgroundColor: Colors.dangerLight },
+  actionDeleteText: {
+    fontSize: Typography.xs,
+    fontWeight: Typography.medium,
+    color: Colors.danger,
+  },
   fab: {
     position: "absolute",
     right: 20,
@@ -243,36 +318,39 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 6,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
+    ...Shadows.fab,
   },
-  fabText: { fontSize: 26, color: "#fff", lineHeight: 28 },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: Colors.overlay,
+    justifyContent: "flex-end",
   },
   dialog: {
-    width: 300,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: Spacing.xxl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.xxxl,
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: Colors.borderLight,
+    alignSelf: "center",
+    marginBottom: Spacing.xl,
   },
   dialogTitle: {
-    fontSize: FontSize.xl,
-    fontWeight: "600",
+    fontSize: Typography.base,
+    fontWeight: Typography.semibold,
     color: Colors.textPrimary,
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   dialogActions: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: Spacing.sm,
+    gap: 12,
     marginTop: Spacing.sm,
   },
-  btn: { minWidth: 70, height: 36, paddingHorizontal: Spacing.md },
+  dialogBtn: { flex: 1 },
 });

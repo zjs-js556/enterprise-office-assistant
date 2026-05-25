@@ -4,13 +4,24 @@ import { getEmployeeApi } from "../api/employeeApi";
 import type { Employee } from "../types";
 import AppButton from "../components/AppButton";
 import LoadingView from "../components/LoadingView";
-import { Colors, FontSize, Spacing, BorderRadius } from "../utils/theme";
+import Card from "../components/Card";
+import UserAvatar from "../components/UserAvatar";
+import StatusTag from "../components/StatusTag";
+import AppIcon, { IconNames, type IconName } from "../components/AppIcon";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
 
-function DetailRow({ label, value }: { label: string; value: string | number }) {
+function DetailRow({ icon, label, value }: { icon: IconName; label: string; value: string | number }) {
   return (
     <View style={styles.row}>
-      <Text style={styles.rowLabel}>{label}</Text>
-      <Text style={styles.rowValue}>{value}</Text>
+      <View style={styles.rowIcon}>
+        <AppIcon name={icon} size={14} color={Colors.textTertiary} />
+      </View>
+      <View style={styles.rowContent}>
+        <Text style={styles.rowLabel}>{label}</Text>
+        <Text style={styles.rowValue}>{value}</Text>
+      </View>
     </View>
   );
 }
@@ -37,32 +48,46 @@ export default function EmployeeDetailScreen({ route, navigation }: any) {
   if (loading) return <LoadingView />;
   if (!employee) return null;
 
-  const colors = ["#1677FF", "#52C41A", "#FAAD14", "#FF4D4F", "#722ED1"];
-  const avatarColor = colors[employee.name.charCodeAt(0) % colors.length];
+  const infoRows = [
+    { icon: IconNames.user, label: "姓名", value: employee.name },
+    { icon: IconNames.calendar, label: "年龄", value: `${employee.age} 岁` },
+    { icon: IconNames.mail, label: "邮箱", value: employee.email },
+    { icon: IconNames.clock, label: "创建时间", value: employee.created_at.slice(0, 10) },
+    { icon: IconNames.refresh, label: "更新时间", value: employee.updated_at.slice(0, 10) },
+  ];
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={[styles.avatar, { backgroundColor: avatarColor }]}>
-          <Text style={styles.avatarText}>{employee.name[0]}</Text>
-        </View>
-        <Text style={styles.name}>{employee.name}</Text>
-        <Text style={styles.subtitle}>{employee.email}</Text>
-      </View>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Card style={styles.profileCard}>
+        <UserAvatar name={employee.name} size={64} />
+        <Text style={styles.profileName}>{employee.name}</Text>
+        <StatusTag label="在职员工" variant="success" />
+      </Card>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>基本信息</Text>
-        <DetailRow label="年龄" value={`${employee.age} 岁`} />
-        <DetailRow label="邮箱" value={employee.email} />
-        <DetailRow label="创建时间" value={employee.created_at.slice(0, 10)} />
-        <DetailRow label="更新时间" value={employee.updated_at.slice(0, 10)} />
-      </View>
+      <Card style={styles.infoCard}>
+        {infoRows.map((row, i) => (
+          <DetailRow key={row.label} {...row} />
+        ))}
+      </Card>
 
-      <AppButton
-        title="编辑员工"
-        onPress={() => navigation.navigate("EmployeeForm", { id: employee.id })}
-        style={styles.editBtn}
-      />
+      <View style={styles.actions}>
+        <AppButton
+          title="编辑信息"
+          onPress={() => navigation.navigate("EmployeeForm", { id: employee.id })}
+          style={styles.actionBtn}
+        />
+        <AppButton
+          title="删除"
+          type="danger"
+          onPress={() => {
+            Alert.alert("删除员工", `确定要删除「${employee.name}」吗？`, [
+              { text: "取消", style: "cancel" },
+              { text: "删除", style: "destructive", onPress: () => navigation.goBack() },
+            ]);
+          }}
+          style={styles.actionBtn}
+        />
+      </View>
     </ScrollView>
   );
 }
@@ -72,69 +97,58 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  header: {
-    backgroundColor: Colors.surface,
+  content: {
+    padding: Spacing.lg,
+  },
+  profileCard: {
     alignItems: "center",
-    paddingVertical: Spacing.xl,
-    marginBottom: Spacing.md,
+    paddingVertical: Spacing.xxl,
+    marginBottom: Spacing.lg,
   },
-  avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: Spacing.md,
-  },
-  avatarText: {
-    fontSize: FontSize.title,
-    color: "#fff",
-    fontWeight: "700",
-  },
-  name: {
-    fontSize: FontSize.xxl,
-    fontWeight: "600",
+  profileName: {
+    fontSize: Typography.xl,
+    fontWeight: Typography.bold,
     color: Colors.textPrimary,
+    marginTop: 12,
+    marginBottom: 8,
   },
-  subtitle: {
-    fontSize: FontSize.md,
-    color: Colors.textSecondary,
-    marginTop: Spacing.xs,
-  },
-  card: {
-    marginHorizontal: Spacing.md,
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-  },
-  cardTitle: {
-    fontSize: FontSize.lg,
-    fontWeight: "600",
-    color: Colors.textPrimary,
-    marginBottom: Spacing.md,
-    paddingBottom: Spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border,
+  infoCard: {
+    marginBottom: Spacing.lg,
   },
   row: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: Spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border,
+    alignItems: "center",
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderLight,
+  },
+  rowIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: Colors.borderLight,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  rowContent: {
+    flex: 1,
   },
   rowLabel: {
-    fontSize: FontSize.md,
-    color: Colors.textSecondary,
+    fontSize: Typography.xs,
+    color: Colors.textTertiary,
+    marginBottom: 2,
   },
   rowValue: {
-    fontSize: FontSize.md,
+    fontSize: Typography.md,
     color: Colors.textPrimary,
-    fontWeight: "500",
+    fontWeight: Typography.medium,
   },
-  editBtn: {
-    marginHorizontal: Spacing.md,
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.xl,
+  actions: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  actionBtn: {
+    flex: 1,
   },
 });

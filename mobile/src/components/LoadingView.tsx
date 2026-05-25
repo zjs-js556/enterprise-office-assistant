@@ -1,6 +1,8 @@
 import React from "react";
 import { View, ActivityIndicator, Text, StyleSheet } from "react-native";
-import { Colors, FontSize, Spacing } from "../utils/theme";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
 
 interface Props {
   message?: string;
@@ -20,11 +22,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: Spacing.xl,
+    padding: Spacing.xxl,
   },
   text: {
     marginTop: Spacing.md,
-    fontSize: FontSize.md,
+    fontSize: Typography.md,
     color: Colors.textSecondary,
   },
 });

@@ -27,14 +27,15 @@ services:
     container_name: office-api
     restart: always
     env_file:
-      - ${ENV_FILE:-/opt/office-assistant/.env}
+      - ${ENV_FILE:-../.env}
     environment:
       FLASK_ENV: ${FLASK_ENV:-production}
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       SECRET_KEY: ${SECRET_KEY}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["*"]}
     volumes:
-      - ${LOG_DIR:-/opt/office-assistant/logs}:/app/logs
+      - ${LOG_DIR:-../logs}:/app/logs
     depends_on:
       office-mysql:
         condition: service_healthy

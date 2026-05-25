@@ -1,16 +1,17 @@
 import React from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
-import { Colors, FontSize, Spacing } from "../utils/theme";
+import { View, Text, TextInput, StyleSheet, TextInputProps } from "react-native";
+import AppIcon, { IconNames } from "./AppIcon";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
 
-interface Props {
+interface Props extends TextInputProps {
   label: string;
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
-  keyboardType?: "default" | "numeric" | "email-address";
-  secureTextEntry?: boolean;
   error?: string;
-  multiline?: boolean;
+  icon?: React.ReactNode;
 }
 
 export default function AppInput({
@@ -18,60 +19,80 @@ export default function AppInput({
   value,
   onChangeText,
   placeholder,
-  keyboardType,
-  secureTextEntry,
   error,
-  multiline,
+  icon,
+  ...rest
 }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={[styles.input, multiline && styles.inputMultiline, error && styles.inputError]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={Colors.textSecondary}
-        keyboardType={keyboardType}
-        secureTextEntry={secureTextEntry}
-        multiline={multiline}
-        textAlignVertical={multiline ? "top" : "center"}
-      />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+      <View style={[styles.inputRow, error && styles.inputRowError]}>
+        {icon && <View style={styles.iconWrap}>{icon}</View>}
+        <TextInput
+          style={[styles.input, rest.multiline && styles.inputMultiline]}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={Colors.textTertiary}
+          {...rest}
+        />
+      </View>
+      {error ? (
+        <View style={styles.errorRow}>
+          <AppIcon name={IconNames.alert} size={14} color={Colors.danger} />
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   label: {
-    fontSize: FontSize.md,
+    fontSize: Typography.base,
+    fontWeight: Typography.medium,
     color: Colors.textPrimary,
-    marginBottom: Spacing.xs,
-    fontWeight: "500",
+    marginBottom: 6,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    borderRadius: 12,
+    backgroundColor: Colors.surface,
+    paddingHorizontal: Spacing.lg,
+  },
+  inputRowError: {
+    borderColor: Colors.danger,
+    backgroundColor: "#FFF5F5",
+  },
+  iconWrap: {
+    marginRight: Spacing.md,
   },
   input: {
-    height: 44,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: 8,
-    paddingHorizontal: Spacing.sm,
-    fontSize: FontSize.md,
+    flex: 1,
+    height: 48,
+    fontSize: Typography.base,
     color: Colors.textPrimary,
-    backgroundColor: Colors.surface,
   },
   inputMultiline: {
     height: 100,
-    paddingTop: Spacing.sm,
+    paddingTop: Spacing.md,
+    textAlignVertical: "top",
   },
-  inputError: {
-    borderColor: Colors.danger,
+  errorRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 4,
   },
-  error: {
-    fontSize: FontSize.sm,
+  errorText: {
+    fontSize: Typography.sm,
     color: Colors.danger,
-    marginTop: Spacing.xs,
+    flex: 1,
   },
 });

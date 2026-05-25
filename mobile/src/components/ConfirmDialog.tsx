@@ -1,6 +1,8 @@
 import React from "react";
 import { Modal, View, Text, StyleSheet } from "react-native";
-import { Colors, FontSize, Spacing, BorderRadius } from "../utils/theme";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
 import AppButton from "./AppButton";
 
 interface Props {
@@ -10,6 +12,7 @@ interface Props {
   onConfirm: () => void;
   onCancel: () => void;
   loading?: boolean;
+  dangerous?: boolean;
 }
 
 export default function ConfirmDialog({
@@ -19,11 +22,13 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
   loading,
+  dangerous = false,
 }: Props) {
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.dialog}>
+          <View style={styles.handle} />
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.message}>{message}</Text>
           <View style={styles.actions}>
@@ -34,8 +39,8 @@ export default function ConfirmDialog({
               style={styles.btn}
             />
             <AppButton
-              title="确认删除"
-              type="danger"
+              title={dangerous ? "确认删除" : "确认"}
+              type={dangerous ? "danger" : "primary"}
               onPress={onConfirm}
               loading={loading}
               style={styles.btn}
@@ -50,35 +55,43 @@ export default function ConfirmDialog({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: Colors.overlay,
+    justifyContent: "flex-end",
   },
   dialog: {
-    width: 300,
     backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: Spacing.xxl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.xxxl,
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: Colors.borderLight,
+    alignSelf: "center",
+    marginBottom: Spacing.xl,
   },
   title: {
-    fontSize: FontSize.xl,
-    fontWeight: "600",
+    fontSize: Typography.base,
+    fontWeight: Typography.semibold,
     color: Colors.textPrimary,
     marginBottom: Spacing.sm,
   },
   message: {
-    fontSize: FontSize.md,
+    fontSize: Typography.md,
     color: Colors.textSecondary,
-    marginBottom: Spacing.lg,
+    lineHeight: 22,
+    marginBottom: Spacing.xxl,
   },
   actions: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: Spacing.sm,
+    gap: Spacing.md,
   },
   btn: {
-    minWidth: 80,
-    height: 36,
-    paddingHorizontal: Spacing.md,
+    flex: 1,
+    height: 50,
   },
 });

@@ -8,7 +8,10 @@ import {
 import AppInput from "../components/AppInput";
 import AppButton from "../components/AppButton";
 import LoadingView from "../components/LoadingView";
-import { Colors, FontSize, Spacing, BorderRadius } from "../utils/theme";
+import Card from "../components/Card";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
 
 interface Errors {
   name?: string;
@@ -103,35 +106,45 @@ export default function EmployeeFormScreen({ route, navigation }: any) {
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={styles.scrollContent}
     >
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>{isEdit ? "编辑员工" : "新增员工"}</Text>
+      <Card>
+        <Text style={styles.sectionLabel}>基本信息</Text>
         <AppInput
-          label="姓名"
+          label="姓名 *"
           value={name}
           onChangeText={setName}
-          placeholder="请输入姓名"
+          placeholder="请输入员工姓名（1-20 字符）"
           error={errors.name}
         />
         <AppInput
-          label="年龄"
+          label="年龄 *"
           value={age}
           onChangeText={setAge}
-          placeholder="请输入年龄"
+          placeholder="请输入年龄（18-60）"
           keyboardType="numeric"
           error={errors.age}
         />
         <AppInput
-          label="邮箱"
+          label="邮箱 *"
           value={email}
           onChangeText={setEmail}
-          placeholder="请输入邮箱"
+          placeholder="请输入工作邮箱"
           keyboardType="email-address"
           error={errors.email}
+        />
+      </Card>
+
+      <View style={styles.actions}>
+        <AppButton
+          title="取消"
+          type="outline"
+          onPress={() => navigation.goBack()}
+          style={styles.actionBtn}
         />
         <AppButton
           title={isEdit ? "保存修改" : "创建员工"}
           onPress={handleSubmit}
           loading={loading}
+          style={styles.actionBtn}
         />
       </View>
     </ScrollView>
@@ -144,17 +157,22 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   scrollContent: {
-    padding: Spacing.md,
-  },
-  card: {
-    backgroundColor: Colors.surface,
-    borderRadius: BorderRadius.md,
     padding: Spacing.lg,
   },
-  cardTitle: {
-    fontSize: FontSize.xl,
-    fontWeight: "600",
-    color: Colors.textPrimary,
+  sectionLabel: {
+    fontSize: Typography.xs,
+    fontWeight: Typography.semibold,
+    color: Colors.textTertiary,
+    textTransform: "uppercase",
+    letterSpacing: 2,
     marginBottom: Spacing.lg,
+  },
+  actions: {
+    flexDirection: "row",
+    gap: 12,
+    marginTop: Spacing.lg,
+  },
+  actionBtn: {
+    flex: 1,
   },
 });

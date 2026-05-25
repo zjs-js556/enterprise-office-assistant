@@ -15,6 +15,14 @@ interface AuthContextType extends AuthState {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+let _signOut: (() => Promise<void>) | null = null;
+
+export function triggerSignOut() {
+  if (_signOut) {
+    _signOut();
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
     isLoading: true,
@@ -51,6 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await AsyncStorage.removeItem("user");
     setState({ isLoading: false, isLoggedIn: false, token: null, user: null });
   }, []);
+
+  _signOut = signOut;
 
   return (
     <AuthContext.Provider value={{ ...state, signIn, signOut }}>

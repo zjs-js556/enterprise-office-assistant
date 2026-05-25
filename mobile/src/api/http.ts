@@ -1,11 +1,11 @@
 import axios from "axios";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { navigate } from "../utils/navigation";
+import { triggerSignOut } from "../context/AuthContext";
 
 const BASE_URL = Platform.select({
-  android: "http://10.0.2.2:5000/api/v1",
-  default: "http://localhost:5000/api/v1",
+  android: "http://114.55.171.7/api/v1",
+  default: "http://114.55.171.7/api/v1",
 });
 
 const http = axios.create({
@@ -29,8 +29,7 @@ http.interceptors.response.use(
     if (response) {
       const data = response.data;
       if (response.status === 401 || data?.code === 401) {
-        await AsyncStorage.removeItem("access_token");
-        navigate("Login");
+        triggerSignOut();
       }
       return Promise.reject(data || { code: -1, message: "请求失败", data: null });
     }

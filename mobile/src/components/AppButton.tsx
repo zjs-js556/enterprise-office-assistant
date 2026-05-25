@@ -6,46 +6,65 @@ import {
   ActivityIndicator,
   ViewStyle,
 } from "react-native";
-import { Colors, FontSize, Spacing, BorderRadius } from "../utils/theme";
+import * as Colors from "../theme/colors";
+import * as Spacing from "../theme/spacing";
+import * as Typography from "../theme/typography";
+import { Shadows } from "../theme";
 
 interface Props {
   title: string;
   onPress: () => void;
   loading?: boolean;
-  type?: "primary" | "danger" | "outline";
+  disabled?: boolean;
+  type?: "primary" | "danger" | "outline" | "ghost";
   style?: ViewStyle;
 }
 
 export default function AppButton({
   title,
   onPress,
-  loading,
+  loading = false,
+  disabled = false,
   type = "primary",
   style,
 }: Props) {
+  const isDisabled = loading || disabled;
+
   const bgColor =
     type === "danger"
       ? Colors.danger
       : type === "outline"
-        ? "transparent"
-        : Colors.primary;
+        ? Colors.surface
+        : type === "ghost"
+          ? "transparent"
+          : Colors.primary;
 
-  const textColor = type === "outline" ? Colors.primary : "#fff";
+  const textColor =
+    type === "outline"
+      ? Colors.textPrimary
+      : type === "ghost"
+        ? Colors.textSecondary
+        : "#fff";
+
+  const borderStyle =
+    type === "outline"
+      ? { borderWidth: 1, borderColor: Colors.borderLight }
+      : type === "ghost"
+        ? {}
+        : {};
+
+  const shadowStyle =
+    type === "primary" && !isDisabled ? Shadows.button : {};
 
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        { backgroundColor: bgColor },
-        type === "outline" && styles.outline,
-        style,
-      ]}
+      style={[styles.button, { backgroundColor: bgColor }, borderStyle, shadowStyle, isDisabled && styles.disabled, style]}
       onPress={onPress}
-      disabled={loading}
-      activeOpacity={0.7}
+      disabled={isDisabled}
+      activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator color={textColor} />
+        <ActivityIndicator size="small" color={textColor} />
       ) : (
         <Text style={[styles.text, { color: textColor }]}>{title}</Text>
       )}
@@ -55,18 +74,18 @@ export default function AppButton({
 
 const styles = StyleSheet.create({
   button: {
-    height: 44,
-    borderRadius: BorderRadius.md,
+    height: 50,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    flexDirection: "row",
   },
-  outline: {
-    borderWidth: 1,
-    borderColor: Colors.primary,
+  disabled: {
+    opacity: 0.6,
   },
   text: {
-    fontSize: FontSize.lg,
-    fontWeight: "600",
+    fontSize: Typography.base,
+    fontWeight: Typography.semibold,
   },
 });
