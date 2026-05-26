@@ -1,3 +1,4 @@
+# Manual trigger — generates unsigned .ipa for 爱思助手 Apple ID signing
 name: Build iOS Unsigned IPA
 
 on:
