@@ -61,3 +61,11 @@ harmony/.idea/
 # Mobile platform generated files
 mobile/.npmrc
 mobile/android-backup/
+
+# Mobile iOS build outputs (unsigned IPA + Xcode build artifacts)
+mobile/release/
+*.ipa
+mobile/ios/build/
+mobile/ios/Pods/
+mobile/ios/DerivedData/
+mobile/ios/*.xcarchive

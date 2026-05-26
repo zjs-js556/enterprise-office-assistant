@@ -15,7 +15,12 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.enterprise.office.assistant",
-      "buildNumber": "1"
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -40,9 +45,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "5271e712-9b9a-49b8-a87a-f5199b1e6e7c"
+        "projectId": "db207770-5d39-425e-89c3-8da438eeb80f"
       }
     },
-    "owner": "zjszjszjs"
+    "owner": "jiashuozhang268"
   }
 }
