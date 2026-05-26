@@ -9,6 +9,10 @@ on:
         required: false
         default: ""
 
+permissions:
+  contents: read
+  actions: read
+
 env:
   APP_NAME: enterprise-office-assistant
   BUNDLE_ID: com.enterprise.office.assistant
@@ -19,8 +23,10 @@ jobs:
     timeout-minutes: 45
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
